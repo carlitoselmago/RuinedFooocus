@@ -4,6 +4,11 @@
         "path": "path_vae",
         "filename": "ae.safetensors"
     },
+    "vae/ae_z_image_turbo.safetensors": {
+        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors",
+        "path": "path_vae",
+        "filename": "ae_z_image_turbo.safetensors"
+    },
     "vae/auraflow_vae_fp32.safetensors": {
         "url": "https://huggingface.co/fal/AuraFlow-v0.3/resolve/main/vae/diffusion_pytorch_model.safetensors",
         "path": "path_vae",

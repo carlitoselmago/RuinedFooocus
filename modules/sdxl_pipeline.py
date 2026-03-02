@@ -137,7 +137,7 @@ class pipeline:
             "clip_llama": "llama_q2.gguf",
             "clip_mistral3": "mistral_3_small_flux2_fp8.safetensors",
             "clip_qwen25": "qwen_2.5_vl_7b_edit-q2_k.gguf",
-            "clip_qwen3": "Qwen3-4B-Q4_K_M.gguf",
+            "clip_qwen3": "qwen_3_4b_fp4_mixed.safetensors",
             "clip_oldt5": "t5xxl_old_fp32-q4_0.gguf",
             "clip_t5": "t5-v1_1-xxl-encoder-Q3_K_S.gguf",
         }
@@ -155,6 +155,7 @@ class pipeline:
             "vae_sd": "sd15_vae.safetensors",
             "vae_sd3": "sd3_vae.safetensors",
             "vae_wan": "pig_wan_vae_fp32-f16.gguf", # FIXME
+            "vae_zimage": "ae_z_image_turbo.safetensors",
             "vae_sdxl": "sdxl_vae.safetensors",
         }
         return settings.default_settings.get(shortname, defaults[shortname] if shortname in defaults else None)
@@ -266,7 +267,7 @@ class pipeline:
                 "latent": "SD3",
                 "clip_type": comfy.sd.CLIPType.LUMINA2,
                 "clip_names": [self.get_clip_name("clip_qwen3")],
-                "vae_name": self.get_vae_name("vae_lumina2"),
+                "vae_name": self.get_vae_name("vae_zimage"),
                 "model_sampling": ('AuraFlow', settings.default_settings.get("lumina2_shift", 3.0))
             },
         }

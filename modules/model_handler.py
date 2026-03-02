@@ -53,6 +53,18 @@ class Models:
                 else f"1{x.casefold()}"
             ),
         )
+        if model_type == "checkpoints":
+            for remote_name in path_manager.get_folder_list("checkpoints"):
+                if remote_name not in self.names[model_type]:
+                    self.names[model_type].append(remote_name)
+            self.names[model_type] = sorted(
+                self.names[model_type],
+                key=lambda x: (
+                    f"0{x.casefold()}"
+                    if not str(Path(x).parent) == "."
+                    else f"1{x.casefold()}"
+                ),
+            )
         self.ready[model_type] = True
 
         if self.offline:
@@ -340,8 +352,19 @@ class Models:
 
 
     def get_model_path(self, model_type, name, hash=None, default=None):
+        from shared import path_manager
+
         # Look through folders for the filename
         filename = self.get_file(model_type, name)
+
+        if filename is None and name is not None:
+            try:
+                filename = path_manager.get_folder_file_path(
+                    model_type,
+                    name,
+                )
+            except Exception:
+                filename = None
 
         # Try looking for model using the hash
         if filename is None and hash is not None:

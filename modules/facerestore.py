@@ -44,13 +44,23 @@ redirect_map = {
 
 sys.meta_path.insert(0, ImportRedirector(redirect_map))
 
-import gfpgan
-from facexlib.utils.face_restoration_helper import FaceRestoreHelper
+GFPGAN_IMPORT_ERROR = None
+try:
+    import gfpgan
+    from facexlib.utils.face_restoration_helper import FaceRestoreHelper
+except Exception as e:
+    gfpgan = None
+    FaceRestoreHelper = None
+    GFPGAN_IMPORT_ERROR = e
 
 class facerestore:
     gfpgan_model = None
 
     def load_gfpgan_model(self):
+        if gfpgan is None or FaceRestoreHelper is None:
+            print(f"WARNING: Face restore is unavailable ({GFPGAN_IMPORT_ERROR})")
+            return False
+
         if self.gfpgan_model is None:
             channel_multiplier = 2
 
@@ -95,9 +105,11 @@ class facerestore:
             self.gfpgan_model.gfpgan = self.gfpgan_model.gfpgan.to(
                 self.gfpgan_model.device
             )
+        return True
 
     def restore_faces(self, image):
-        self.load_gfpgan_model()
+        if not self.load_gfpgan_model():
+            return image
 
         image_bgr = image[:, :, ::-1]
         _cropped_faces, _restored_faces, gfpgan_output_bgr = self.gfpgan_model.enhance(
@@ -115,6 +127,8 @@ class facerestore:
     def process(self, input_image):
         input_image = cv2.cvtColor(np.asarray(input_image), cv2.COLOR_RGB2BGR)
         result_image = self.restore_faces(input_image)
+        if result_image is input_image:
+            return Image.fromarray(cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB))
         image = Image.fromarray(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
 
         return image

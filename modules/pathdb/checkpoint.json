@@ -1,12 +1,32 @@
 {
     "checkpoints/sd_xl_base_1.0_0.9vae.safetensors": {
         "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0_0.9vae.safetensors",
-	"path": "path_checkpoints",
+        "path": "path_checkpoints",
         "filename": "sd_xl_base_1.0_0.9vae.safetensors"
     },
     "checkpoints/SDXL 1.0/top5_v10.safetensors": {
         "url": "https://civitai.com/api/download/models/624591",
-	"path": "path_checkpoints",
+        "path": "path_checkpoints",
         "filename": "SDXL 1.0/top5_v10.safetensors"
+    },
+    "checkpoints/z_image_turbo_bf16.safetensors": {
+        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors",
+        "path": "path_checkpoints",
+        "filename": "z_image_turbo_bf16.safetensors"
+    },
+    "checkpoints/z_image_turbo_nvfp4.safetensors": {
+        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_nvfp4.safetensors",
+        "path": "path_checkpoints",
+        "filename": "z_image_turbo_nvfp4.safetensors"
+    },
+    "checkpoints/z-image-turbo-Q4_K_M.gguf": {
+        "url": "https://huggingface.co/unsloth/Z-Image-Turbo-GGUF/resolve/main/z-image-turbo-Q4_K_M.gguf",
+        "path": "path_checkpoints",
+        "filename": "z-image-turbo-Q4_K_M.gguf"
+    },
+    "checkpoints/z-image-turbo-Q4_K_S.gguf": {
+        "url": "https://huggingface.co/unsloth/Z-Image-Turbo-GGUF/resolve/main/z-image-turbo-Q4_K_S.gguf",
+        "path": "path_checkpoints",
+        "filename": "z-image-turbo-Q4_K_S.gguf"
     }
 }

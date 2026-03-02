@@ -74,7 +74,11 @@ def prepare_environment(offline=False):
 
     requirements_file = "requirements_versions.txt"
 
-    modules_file = "pip/modules.txt"
+    if sys.version_info >= (3, 14):
+        modules_file = "pip/modules_py314.txt"
+        print("Using Python 3.14+ module constraints.")
+    else:
+        modules_file = "pip/modules.txt"
 
     if offline:
         print("Skip pip check.")
