@@ -100,7 +100,7 @@ def create_settings():
                     label=t("Base Model"),
                     interactive=True,
                     choices=models.names['checkpoints'],
-                    value=settings.default_settings.get("base_model", "sd_xl_base_1.0_0.9vae.safetensors"),
+                    value=settings.default_settings.get("base_model", "z-image-turbo-Q4_K_M.gguf"),
                 )
                 add_setting("base_model", base_model)
                 with gr.Row():

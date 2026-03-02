@@ -38,10 +38,12 @@ class PathManager:
     name = None
     settings_path = None
     paths = None
+    checked_files = None
 
     def __init__(self):
         from argparser import args
         self.name = args.settings
+        self.checked_files = set()
         self.set_settings_path(args.settings)
         self.paths = self.load_paths()
         self.model_paths = self.get_model_paths()
@@ -215,6 +217,14 @@ class PathManager:
             self.get_abspath(folder) / file_info["filename"]
         )
 
+        cache_key = str(file_path)
+        if file_path.exists() and cache_key not in self.checked_files:
+            # Validate cached GGUF files and auto-recover from interrupted downloads.
+            if file_path.suffix.lower() == ".gguf" and not self.is_valid_gguf(file_path):
+                print(f"WARNING: Corrupt GGUF cache detected: {file_path}. Re-downloading.")
+                self.download_file(file_key, force=True)
+            self.checked_files.add(cache_key)
+
         if not file_path.exists():
             self.download_file(file_key)
 
@@ -232,7 +242,7 @@ class PathManager:
         return result
 
 
-    def download_file(self, file_key):
+    def download_file(self, file_key, force=False):
         """
         Download a file if it doesn't exist.
         """
@@ -243,23 +253,56 @@ class PathManager:
         file_path = (
             self.get_abspath(folder) / file_info["filename"]
         )
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        tmp_path = file_path.with_suffix(file_path.suffix + ".tmp")
+        if tmp_path.exists():
+            tmp_path.unlink()
+        if not force and file_path.exists():
+            return
 
         print(f"Downloading {file_info['url']}...")
         response = requests.get(file_info["url"], stream=True)
+        response.raise_for_status()
         total_size = int(response.headers.get("content-length", 0))
 
-        with open(file_path, "wb") as file, tqdm(
-            desc=file_info["filename"],
-            total=total_size,
-            unit="iB",
-            unit_scale=True,
-            unit_divisor=1024,
-        ) as progress_bar:
-            for data in response.iter_content(chunk_size=1024):
-                size = file.write(data)
-                progress_bar.update(size)
+        bytes_written = 0
+        try:
+            with open(tmp_path, "wb") as file, tqdm(
+                desc=file_info["filename"],
+                total=total_size,
+                unit="iB",
+                unit_scale=True,
+                unit_divisor=1024,
+            ) as progress_bar:
+                for data in response.iter_content(chunk_size=1024):
+                    size = file.write(data)
+                    bytes_written += size
+                    progress_bar.update(size)
+        except Exception:
+            if tmp_path.exists():
+                tmp_path.unlink()
+            raise
+
+        if total_size > 0 and bytes_written != total_size:
+            if tmp_path.exists():
+                tmp_path.unlink()
+            raise IOError(
+                f"Download incomplete for {file_info['filename']}: {bytes_written}/{total_size} bytes"
+            )
+
+        os.replace(tmp_path, file_path)
+        self.checked_files.add(str(file_path))
 
         print(f"Downloaded {file_info['filename']} to {file_path}")
+
+    def is_valid_gguf(self, file_path):
+        try:
+            import gguf
+            gguf.GGUFReader(str(file_path))
+            return True
+        except Exception as e:
+            print(f"WARNING: GGUF validation failed for {file_path}: {e}")
+            return False
 
     def find_lcm_lora(self):
         return self.get_file_path("lcm_lora")

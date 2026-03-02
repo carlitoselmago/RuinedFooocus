@@ -32,7 +32,7 @@ After you download the file, please uncompress it, and then run the "run.bat".
 
 In the first time you launch the software, it will automatically download models:
 
-1. It will download [sd_xl_base_1.0_0.9vae.safetensors from here](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0_0.9vae.safetensors) as the file "Fooocus\models\checkpoints\sd_xl_base_1.0_0.9vae.safetensors".
+1. It will download [z-image-turbo-Q4_K_M.gguf from here](https://huggingface.co/unsloth/Z-Image-Turbo-GGUF/resolve/main/z-image-turbo-Q4_K_M.gguf) as the file "Fooocus\models\checkpoints\z-image-turbo-Q4_K_M.gguf".
 
 If you already have these files, you can copy them to the above locations to speed up installation.
 
@@ -48,7 +48,7 @@ The command lines are
     source venv/bin/activate
     pip install -r requirements_versions.txt
 
-Then download the models: download [sd_xl_base_1.0_0.9vae.safetensors from here](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0_0.9vae.safetensors) as the file "Fooocus\models\checkpoints\sd_xl_base_1.0_0.9vae.safetensors", and download [sd_xl_refiner_1.0_0.9vae.safetensors from here](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0_0.9vae.safetensors) as the file "Fooocus\models\checkpoints\sd_xl_refiner_1.0_0.9vae.safetensors". **Or let Fooocus automatically download the models** using the launcher:
+Then download the model: [z-image-turbo-Q4_K_M.gguf from here](https://huggingface.co/unsloth/Z-Image-Turbo-GGUF/resolve/main/z-image-turbo-Q4_K_M.gguf) as the file "Fooocus\models\checkpoints\z-image-turbo-Q4_K_M.gguf". **Or let Fooocus automatically download the model** using the launcher:
 
     python launch.py
 

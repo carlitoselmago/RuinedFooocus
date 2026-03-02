@@ -1,11 +1,14 @@
+import os
 import re
+import sys
 try:
     import xllamacpp as xlc
     Llama = "xlc"
-except:
-    print("ERROR: Could not load Llama.")
+except Exception as e:
+    print(f"ERROR: Could not load Llama: {e}")
     Llama = None
-from txtai import Embeddings
+Embeddings = None
+_embeddings_error = None
 from modules.util import TimeIt
 from pathlib import Path
 from modules.util import url_to_filename, load_file_from_url
@@ -13,6 +16,27 @@ from shared import path_manager, settings, local_url
 import json
 import xmltodict
 import modules.async_worker as worker
+
+
+def load_embeddings():
+    global Embeddings, _embeddings_error
+
+    if Embeddings is not None:
+        return True
+    if _embeddings_error is not None:
+        return False
+
+    try:
+        # protobuf C-extension support lags on Python 3.14 in some wheels.
+        if sys.version_info >= (3, 14):
+            os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
+        from txtai import Embeddings as txtai_embeddings
+        Embeddings = txtai_embeddings
+        return True
+    except Exception as e:
+        _embeddings_error = e
+        print(f"WARNING: txtai embeddings disabled: {e}")
+        return False
 
 def llama_names():
         names = []
@@ -109,8 +133,15 @@ class pipeline:
 
     def index_source(self, source):
         if self.embeddings == None:
-            self.embeddings = Embeddings(content=True)
-            self.embeddings.initindex(reindex=True)
+            if not load_embeddings():
+                return
+            try:
+                self.embeddings = Embeddings(content=True)
+                self.embeddings.initindex(reindex=True)
+            except Exception as e:
+                print(f"WARNING: Failed to init embeddings index: {e}")
+                self.embeddings = None
+                return
 
         match source[0]:
 

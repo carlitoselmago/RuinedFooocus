@@ -15,7 +15,7 @@ class SettingsManager:
         "negative_prompt": "",
         "performance": "Speed",
         "resolution": "1152x896 (4:3)",
-        "base_model": "sd_xl_base_1.0_0.9vae.safetensors",
+        "base_model": "z-image-turbo-Q4_K_M.gguf",
         "lora_1_model": "None",
         "lora_1_weight": 0.5,
         "lora_2_model": "None",
@@ -65,6 +65,16 @@ class SettingsManager:
         for key, value in self.DEFAULT_SETTINGS.items():
             if key not in self.default_settings:
                 self.default_settings[key] = value
+                changed = True
+
+        # Migrate legacy default checkpoint to the current default checkpoint.
+        if self.subfolder in [None, "", "default"]:
+            legacy_defaults = {
+                "sd_xl_base_1.0_0.9vae.safetensors",
+                "z_image_turbo_bf16.safetensors",
+            }
+            if self.default_settings.get("base_model") in legacy_defaults:
+                self.default_settings["base_model"] = self.DEFAULT_SETTINGS["base_model"]
                 changed = True
 
         # Some sanity checks

@@ -11,6 +11,9 @@ os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 os.environ["DO_NOT_TRACK"] = "1"
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
+if sys.version_info >= (3, 14):
+    # protobuf binary wheels can fail to import on some Python 3.14 setups.
+    os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
